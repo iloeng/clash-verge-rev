@@ -142,7 +142,7 @@ export const ControllerViewer = forwardRef<DialogRef>((props, ref) => {
             <TextField
               autoComplete="new-password"
               size="small"
-              sx={{ width: 175 }} // 调整为更合适的宽度
+              sx={{ width: 175 }}
               value={controller}
               placeholder="Required"
               onChange={(e) => setController(e.target.value)}
@@ -166,7 +166,7 @@ export const ControllerViewer = forwardRef<DialogRef>((props, ref) => {
             <TextField
               autoComplete="new-password"
               size="small"
-              sx={{ width: 175 }} // 调整为更合适的宽度
+              sx={{ width: 175 }}
               value={secret}
               placeholder={t("Recommended")}
               onChange={(e) => setSecret(e.target.value)}
@@ -202,4 +202,4 @@ export const ControllerViewer = forwardRef<DialogRef>((props, ref) => {
       </Snackbar>
     </BaseDialog>
   );
-});  
+});
