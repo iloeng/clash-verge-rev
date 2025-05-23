@@ -79,11 +79,11 @@ impl IClashTemp {
         rng.gen_range(1111..=65535)
     }
 
-    // 生成32位强密码（包含大小写字母、数字、特殊符号）
+    // 生成64位强密码（包含大小写字母、数字、特殊符号）
     fn generate_secret() -> String {
         const CHARS: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;':\",.<>/?`~";
         let mut rng = OsRng;
-        (0..32)
+        (0..64)
             .map(|_| CHARS[rng.gen_range(0..CHARS.len())] as char)
             .collect()
     }

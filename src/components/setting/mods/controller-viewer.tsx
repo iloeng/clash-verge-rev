@@ -28,7 +28,7 @@ const generateRandomPort = (): number => {
 };
 
 const generateRandomPassword = (length: number = 64): string => {
-  const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;':\",.<>/?`~";
   let password = "";
 
   for (let i = 0; i < length; i++) {
