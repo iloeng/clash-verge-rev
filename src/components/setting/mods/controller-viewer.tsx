@@ -24,15 +24,19 @@ import { useTranslation } from "react-i18next";
 
 // 随机端口和密码生成
 const generateRandomPort = (): number => {
-  return Math.floor(Math.random() * (65535 - 1024 + 1)) + 1024;
+  const array = new Uint16Array(1);
+  window.crypto.getRandomValues(array);
+  return (array[0] % (65535 - 1024 + 1)) + 1024;
 };
 
 const generateRandomPassword = (length: number = 64): string => {
   const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;':\",.<>/?`~";
   let password = "";
+  const randomValues = new Uint32Array(length);
+  window.crypto.getRandomValues(randomValues);
 
   for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * charset.length);
+    const randomIndex = randomValues[i] % charset.length;
     password += charset.charAt(randomIndex);
   }
 
