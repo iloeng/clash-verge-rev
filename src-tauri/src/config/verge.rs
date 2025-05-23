@@ -163,6 +163,8 @@ pub struct IVerge {
 
     pub verge_http_enabled: Option<bool>,
 
+    pub verge_enable_random_controller: Option<bool>,
+
     /// WebDAV 配置 (加密存储)
     #[serde(
         serialize_with = "serialize_encrypted",
@@ -293,6 +295,7 @@ impl IVerge {
             verge_socks_enabled: Some(false),
             verge_port: Some(7899),
             verge_http_enabled: Some(false),
+            verge_enable_random_controller: Some(true),
             enable_proxy_guard: Some(false),
             use_default_bypass: Some(true),
             proxy_guard_duration: Some(30),

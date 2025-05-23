@@ -11,6 +11,9 @@ use anyhow::{bail, Result};
 use once_cell::sync::OnceCell;
 use parking_lot::{Mutex, RwLock};
 use percent_encoding::percent_decode_str;
+use rand::{Rng, SeedableRng};
+use rand_chacha::ChaCha8Rng;
+use rand_core::OsRng;
 use serde_yaml::Mapping;
 use std::{
     sync::Arc,
@@ -140,6 +143,30 @@ pub async fn find_unused_port() -> Result<u16> {
     }
 }
 
+// 生成随机端口（动态端口范围：1111-65535）
+fn generate_random_port() -> u16 {
+    let seed = generate_seed();
+    let mut rng = ChaCha8Rng::from_seed(seed);
+    rng.gen_range(1111..=65535)
+}
+
+// 生成64位强密码（包含大小写字母、数字、特殊符号）
+fn generate_secret() -> String {
+    const CHARS: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;':\",.<>/?`~";
+    let seed = generate_seed();
+    let mut rng = ChaCha8Rng::from_seed(seed);
+    (0..64)
+        .map(|_| CHARS[rng.gen_range(0..CHARS.len())] as char)
+        .collect()
+}
+
+// 生成加密安全的随机种子
+fn generate_seed() -> [u8; 32] {
+    let mut seed = [0u8; 32];
+    OsRng.fill(&mut seed as &mut [u8]);
+    seed
+}
+
 /// 异步方式处理启动后的额外任务
 pub async fn resolve_setup_async(app_handle: &AppHandle) {
     logging!(info, Type::Setup, true, "执行异步设置任务...");
@@ -165,6 +192,12 @@ pub async fn resolve_setup_async(app_handle: &AppHandle) {
             err
         );
     }
+
+    logging_error!(
+        Type::Setup,
+        true,
+        resolve_random_external_controller_config().await
+    );
 
     logging!(trace, Type::Config, true, "初始化配置...");
     logging_error!(Type::Config, true, Config::init_config().await);
@@ -492,6 +525,34 @@ async fn resolve_random_port_config() -> Result<()> {
         clash_data.save_config()
     })
     .await??;
+
+    Ok(())
+}
+
+async fn resolve_random_external_controller_config() -> Result<()> {
+    let verge_config = Config::verge();
+    let clash_config = Config::clash();
+    let enable_random_controller = verge_config
+        .latest()
+        .verge_enable_random_controller
+        .unwrap_or(true);
+
+    if enable_random_controller {
+        let port = generate_random_port();
+        let secret = generate_secret();
+        let external_controller = format!("127.0.0.1:{}", port);
+
+        // let mut verge_data = verge_config.data();
+        // verge_data.patch_config(IVerge {
+        //     verge_enable_random_controller: Some(true),
+        // });
+
+        let mut mapping = Mapping::new();
+        mapping.insert("external-controller".into(), external_controller.into());
+        mapping.insert("secret".into(), secret.into());
+        clash_config.data().patch_config(mapping);
+        clash_config.data().save_config()?;
+    }
 
     Ok(())
 }

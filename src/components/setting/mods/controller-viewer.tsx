@@ -15,6 +15,7 @@ import {
   ListItem,
   ListItemText,
   Snackbar,
+  Switch,
   TextField,
   Tooltip
 } from "@mui/material";
@@ -29,16 +30,28 @@ export const ControllerViewer = forwardRef<DialogRef>((props, ref) => {
   const [isSaving, setIsSaving] = useState(false);
 
   const { clashInfo, patchInfo } = useClashInfo();
+  const { verge, mutateVerge, patchVerge } = useVerge();
 
   const [controller, setController] = useState(clashInfo?.server || "");
   const [secret, setSecret] = useState(clashInfo?.secret || "");
+  const [enableRandomController, setEnableRandomController] = useState(verge?.verge_enable_random_controller || false);
 
+  // const handleRandomControllerToggle = useLockFn(async (checked: boolean) => {
+  //   // showNotice('info', t("Hello tunglies"), 3000);
+  //   setEnableRandomController(checked);
+  //   await patchVerge({ verge_enable_random_controller: checked });
+  // });
 
   const onSave = useLockFn(async () => {
     if (!controller.trim()) {
       showNotice('info', t("Controller address cannot be empty"), 3000);
       return;
     }
+
+    // if (!secret.trim()) {
+    //   showNotice('info', t("Secret cannot be empty"), 3000);
+    //   return;
+    // }
 
     try {
       setIsSaving(true);
@@ -149,6 +162,18 @@ export const ControllerViewer = forwardRef<DialogRef>((props, ref) => {
             </Tooltip>
           </Box>
         </ListItem>
+
+      {/* <ListItem sx={{ padding: "5px 2px", display: "flex", justifyContent: "space-between" }}>
+        <ListItemText primary={t("Runtime Random Controller")} />
+        <Box display="flex" alignItems="center" gap={1}>
+          <Switch
+            edge="end"
+            checked={enableRandomController}
+            onChange={(e) => handleRandomControllerToggle(e.target.checked)}
+          />
+        </Box>
+      </ListItem> */}
+
       </List>
 
       <Snackbar

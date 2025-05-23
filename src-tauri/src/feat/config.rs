@@ -95,6 +95,7 @@ pub async fn patch_verge(patch: IVerge, not_save_file: bool) -> Result<()> {
     let tray_event = patch.tray_event;
     let home_cards = patch.home_cards.clone();
     let enable_auto_light_weight = patch.enable_auto_light_weight_mode;
+    let enable_random_controller = patch.verge_enable_random_controller;
     let res: std::result::Result<(), anyhow::Error> = {
         // Initialize with no flags set
         let mut update_flags: i32 = UpdateFlags::None as i32;
@@ -163,6 +164,10 @@ pub async fn patch_verge(patch: IVerge, not_save_file: bool) -> Result<()> {
 
         if enable_auto_light_weight.is_some() {
             update_flags |= UpdateFlags::LighteWeight as i32;
+        }
+
+        if enable_random_controller.is_some() {
+            update_flags |= UpdateFlags::VergeConfig as i32;
         }
 
         // Process updates based on flags

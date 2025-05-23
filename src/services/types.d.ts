@@ -761,6 +761,7 @@ interface IVergeConfig {
   verge_tproxy_enabled?: boolean;
   verge_socks_enabled?: boolean;
   verge_http_enabled?: boolean;
+  verge_enable_random_controller?: boolean;
   enable_proxy_guard?: boolean;
   enable_bypass_check?: boolean;
   use_default_bypass?: boolean;
